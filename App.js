@@ -21,17 +21,26 @@ class InputField extends React.Component {
         super(props);
         this.state = {
             style: styles.blurred,
-            query: '',
+            text: '',
         };
+    }
+    
+    submitAndClear = () => {
+        this.props.writeQuery(this.state.text)
+        this.setState({
+            text: ''
+        })
     }
     
     render() {
         return (
             <TextInput
+                {...this.props}
                 onBlur = {(style) => this.setState({ style: styles.blurred })}
                 onFocus = {(style) => this.setState({ style: styles.focused })}
+                onChangeText = {text => this.setState({ text })}
+                onSubmitEditing = {this.submitAndClear}
                 style = {[styles.inputField, this.state.style]}
-                {...this.props} // Inherit any props passed to it; e.g., multiline, numberOfLines below
                 editable = {true}
                 multiline = {true}
                 numberOfLines = {5}
@@ -55,14 +64,6 @@ export default class App extends Component<Props> {
             disabled: false,
         }
         this.index = 0;
-    }
-    
-    onFocus() {
-        this.setState({ style: styles.blurred })
-    }
-    
-    onBlur() {
-        this.setState({ style: styles.focused })
     }
     
     appendInput(query) {
@@ -139,11 +140,9 @@ export default class App extends Component<Props> {
                 </ScrollView>
                 <View style={styles.inputContainer}>
                     <InputField
-                        ref = {component => this._InputField = component}
-                        onChangeText = {(value) => this.setState({ query: value })}
-                        onChangeText = {(value) => this.setState({ query: value })}
-                        value = { this.state.query }
-                    / >
+                        //onSubmitEditing = {(text) => this.appendOutput() }
+                        writeQuery = {this.writeQuery}
+                    />
                 </View>
           </KeyboardAvoidingView>
         );
